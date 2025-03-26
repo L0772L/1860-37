@@ -3,32 +3,43 @@ CHIP DecoderSegment201890722 {
     OUT c;
 
     PARTS:
-    // First create necessary inversions
-    Not(in=A, out=NotA);
-    Not(in=B, out=NotB);
-    Not(in=C, out=NotC);
-    Not(in=D, out=NotD);
-
-    // Create intermediate terms
-    Or(a=NotA, b=NotB, out=NotAorNotB);
-    Or(a=NotA, b=C, out=NotAorC);
-    Or(a=B, b=NotC, out=BorNotC);
-    Or(a=A, b=NotB, out=AorNotB);
-    Or(a=A, b=C, out=AorC);
-    Or(a=B, b=C, out=BorC);
-
-    // Combine terms
-    And(a=NotAorNotB, b=NotC, out=term1);
-    And(a=NotAorNotB, b=C, out=term2);
-    And(a=NotAorC, b=BorNotC, out=term3);
-    And(a=AorNotB, b=NotC, out=term4);
-    And(a=AorNotB, b=C, out=term5);
-    And(a=AorC, b=BorC, out=term6);
-
-    // Final combination
-    Or(a=term1, b=term2, out=comb1);
-    Or(a=term3, b=term4, out=comb2);
-    Or(a=term5, b=term6, out=comb3);
-    Or(a=comb1, b=comb2, out=comb4);
-    Or(a=comb4, b=comb3, out=c);
+    // Segment c is ON for: 0,2,3,5,6,8,9,A,B,C,D,E,F
+    // OFF for: 1,4,7
+    
+    // Optimized logic for segment c
+    Not(in=A, out=notA);
+    Not(in=B, out=notB);
+    Not(in=C, out=notC);
+    Not(in=D, out=notD);
+    
+    // When A is low (0-7)
+    And(a=notA, b=notB, c=notC, out=case0);
+    And(a=notA, b=notB, c=C, d=notD, out=case2);
+    And(a=notA, b=notB, c=C, d=D, out=case3);
+    And(a=notA, b=B, c=notC, d=D, out=case5);
+    And(a=notA, b=B, c=C, d=notD, out=case6);
+    
+    // When A is high (8-F)
+    And(a=A, b=notB, c=notC, out=case8);
+    And(a=A, b=notB, c=notC, d=D, out=case9);
+    And(a=A, b=notB, c=C, d=notD, out=caseA);
+    And(a=A, b=notB, c=C, d=D, out=caseB);
+    And(a=A, b=B, c=notC, out=caseC);
+    And(a=A, b=B, c=notC, d=D, out=caseD);
+    And(a=A, b=B, c=C, d=notD, out=caseE);
+    And(a=A, b=B, c=C, d=D, out=caseF);
+    
+    // Combine all cases where c should be ON
+    Or(a=case0, b=case2, out=or1);
+    Or(a=or1, b=case3, out=or2);
+    Or(a=or2, b=case5, out=or3);
+    Or(a=or3, b=case6, out=or4);
+    Or(a=or4, b=case8, out=or5);
+    Or(a=or5, b=case9, out=or6);
+    Or(a=or6, b=caseA, out=or7);
+    Or(a=or7, b=caseB, out=or8);
+    Or(a=or8, b=caseC, out=or9);
+    Or(a=or9, b=caseD, out=or10);
+    Or(a=or10, b=caseE, out=or11);
+    Or(a=or11, b=caseF, out=c);
 }
