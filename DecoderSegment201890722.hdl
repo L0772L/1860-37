@@ -3,88 +3,65 @@ CHIP DecoderSegment201890722 {
     OUT c;
 
     PARTS:
-    // Implement all necessary terms from the truth table
+    // First implement all necessary inversions
     Not(in=A, out=notA);
     Not(in=B, out=notB);
     Not(in=C, out=notC);
     Not(in=D, out=notD);
 
-    // Term 1: A'B'C'D' (Hex 0)
-    And(a=notA, b=notB, out=and1);
-    And(a=and1, b=notC, out=and2);
-    And(a=and2, b=notD, out=term1);
+    // Segment c is ON for these hex digits: 0,2,3,5,6,8,9,A,B,C,D,E,F
+    // Implement as sum of minterms:
+    
+    // Hex 0 (0000): A'B'C'D'
+    And(a=notA, b=notB, c=notC, d=notD, out=t0);
+    
+    // Hex 2 (0010): A'B'CD'
+    And(a=notA, b=notB, c=C, d=notD, out=t2);
+    
+    // Hex 3 (0011): A'B'CD
+    And(a=notA, b=notB, c=C, d=D, out=t3);
+    
+    // Hex 5 (0101): A'BC'D
+    And(a=notA, b=B, c=notC, d=D, out=t5);
+    
+    // Hex 6 (0110): A'BCD'
+    And(a=notA, b=B, c=C, d=notD, out=t6);
+    
+    // Hex 8 (1000): AB'C'D'
+    And(a=A, b=notB, c=notC, d=notD, out=t8);
+    
+    // Hex 9 (1001): AB'C'D
+    And(a=A, b=notB, c=notC, d=D, out=t9);
+    
+    // Hex A (1010): AB'CD'
+    And(a=A, b=notB, c=C, d=notD, out=tA);
+    
+    // Hex B (1011): AB'CD
+    And(a=A, b=notB, c=C, d=D, out=tB);
+    
+    // Hex C (1100): ABC'D'
+    And(a=A, b=B, c=notC, d=notD, out=tC);
+    
+    // Hex D (1101): ABC'D
+    And(a=A, b=B, c=notC, d=D, out=tD);
+    
+    // Hex E (1110): ABCD'
+    And(a=A, b=B, c=C, d=notD, out=tE);
+    
+    // Hex F (1111): ABCD
+    And(a=A, b=B, c=C, d=D, out=tF);
 
-    // Term 2: A'B'CD' (Hex 2)
-    And(a=notA, b=notB, out=and3);
-    And(a=and3, b=C, out=and4);
-    And(a=and4, b=notD, out=term2);
-
-    // Term 3: A'B'CD (Hex 3)
-    And(a=notA, b=notB, out=and5);
-    And(a=and5, b=C, out=and6);
-    And(a=and6, b=D, out=term3);
-
-    // Term 4: A'BC'D (Hex 5)
-    And(a=notA, b=B, out=and7);
-    And(a=and7, b=notC, out=and8);
-    And(a=and8, b=D, out=term4);
-
-    // Term 5: A'BCD' (Hex 6)
-    And(a=notA, b=B, out=and9);
-    And(a=and9, b=C, out=and10);
-    And(a=and10, b=notD, out=term5);
-
-    // Term 6: AB'C'D' (Hex 8)
-    And(a=A, b=notB, out=and11);
-    And(a=and11, b=notC, out=and12);
-    And(a=and12, b=notD, out=term6);
-
-    // Term 7: AB'C'D (Hex 9)
-    And(a=A, b=notB, out=and13);
-    And(a=and13, b=notC, out=and14);
-    And(a=and14, b=D, out=term7);
-
-    // Term 8: AB'CD' (Hex A)
-    And(a=A, b=notB, out=and15);
-    And(a=and15, b=C, out=and16);
-    And(a=and16, b=notD, out=term8);
-
-    // Term 9: AB'CD (Hex B)
-    And(a=A, b=notB, out=and17);
-    And(a=and17, b=C, out=and18);
-    And(a=and18, b=D, out=term9);
-
-    // Term 10: ABC'D' (Hex C)
-    And(a=A, b=B, out=and19);
-    And(a=and19, b=notC, out=and20);
-    And(a=and20, b=notD, out=term10);
-
-    // Term 11: ABC'D (Hex D)
-    And(a=A, b=B, out=and21);
-    And(a=and21, b=notC, out=and22);
-    And(a=and22, b=D, out=term11);
-
-    // Term 12: ABCD' (Hex E)
-    And(a=A, b=B, out=and23);
-    And(a=and23, b=C, out=and24);
-    And(a=and24, b=notD, out=term12);
-
-    // Term 13: ABCD (Hex F)
-    And(a=A, b=B, out=and25);
-    And(a=and25, b=C, out=and26);
-    And(a=and26, b=D, out=term13);
-
-    // Combine all terms with OR gates
-    Or(a=term1, b=term2, out=or1);
-    Or(a=or1, b=term3, out=or2);
-    Or(a=or2, b=term4, out=or3);
-    Or(a=or3, b=term5, out=or4);
-    Or(a=or4, b=term6, out=or5);
-    Or(a=or5, b=term7, out=or6);
-    Or(a=or6, b=term8, out=or7);
-    Or(a=or7, b=term9, out=or8);
-    Or(a=or8, b=term10, out=or9);
-    Or(a=or9, b=term11, out=or10);
-    Or(a=or10, b=term12, out=or11);
-    Or(a=or11, b=term13, out=c);
+    // Combine all true terms with OR gates
+    Or(a=t0, b=t2, out=o1);
+    Or(a=o1, b=t3, out=o2);
+    Or(a=o2, b=t5, out=o3);
+    Or(a=o3, b=t6, out=o4);
+    Or(a=o4, b=t8, out=o5);
+    Or(a=o5, b=t9, out=o6);
+    Or(a=o6, b=tA, out=o7);
+    Or(a=o7, b=tB, out=o8);
+    Or(a=o8, b=tC, out=o9);
+    Or(a=o9, b=tD, out=o10);
+    Or(a=o10, b=tE, out=o11);
+    Or(a=o11, b=tF, out=c);
 }
