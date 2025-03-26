@@ -3,65 +3,32 @@ CHIP DecoderSegment201890722 {
     OUT c;
 
     PARTS:
-    // First implement all necessary inversions
-    Not(in=A, out=notA);
-    Not(in=B, out=notB);
-    Not(in=C, out=notC);
-    Not(in=D, out=notD);
+    // First create necessary inversions
+    Not(in=A, out=NotA);
+    Not(in=B, out=NotB);
+    Not(in=C, out=NotC);
+    Not(in=D, out=NotD);
 
-    // Segment c is ON for these hex digits: 0,2,3,5,6,8,9,A,B,C,D,E,F
-    // Implement as sum of minterms:
-    
-    // Hex 0 (0000): A'B'C'D'
-    And(a=notA, b=notB, c=notC, d=notD, out=t0);
-    
-    // Hex 2 (0010): A'B'CD'
-    And(a=notA, b=notB, c=C, d=notD, out=t2);
-    
-    // Hex 3 (0011): A'B'CD
-    And(a=notA, b=notB, c=C, d=D, out=t3);
-    
-    // Hex 5 (0101): A'BC'D
-    And(a=notA, b=B, c=notC, d=D, out=t5);
-    
-    // Hex 6 (0110): A'BCD'
-    And(a=notA, b=B, c=C, d=notD, out=t6);
-    
-    // Hex 8 (1000): AB'C'D'
-    And(a=A, b=notB, c=notC, d=notD, out=t8);
-    
-    // Hex 9 (1001): AB'C'D
-    And(a=A, b=notB, c=notC, d=D, out=t9);
-    
-    // Hex A (1010): AB'CD'
-    And(a=A, b=notB, c=C, d=notD, out=tA);
-    
-    // Hex B (1011): AB'CD
-    And(a=A, b=notB, c=C, d=D, out=tB);
-    
-    // Hex C (1100): ABC'D'
-    And(a=A, b=B, c=notC, d=notD, out=tC);
-    
-    // Hex D (1101): ABC'D
-    And(a=A, b=B, c=notC, d=D, out=tD);
-    
-    // Hex E (1110): ABCD'
-    And(a=A, b=B, c=C, d=notD, out=tE);
-    
-    // Hex F (1111): ABCD
-    And(a=A, b=B, c=C, d=D, out=tF);
+    // Create intermediate terms
+    Or(a=NotA, b=NotB, out=NotAorNotB);
+    Or(a=NotA, b=C, out=NotAorC);
+    Or(a=B, b=NotC, out=BorNotC);
+    Or(a=A, b=NotB, out=AorNotB);
+    Or(a=A, b=C, out=AorC);
+    Or(a=B, b=C, out=BorC);
 
-    // Combine all true terms with OR gates
-    Or(a=t0, b=t2, out=o1);
-    Or(a=o1, b=t3, out=o2);
-    Or(a=o2, b=t5, out=o3);
-    Or(a=o3, b=t6, out=o4);
-    Or(a=o4, b=t8, out=o5);
-    Or(a=o5, b=t9, out=o6);
-    Or(a=o6, b=tA, out=o7);
-    Or(a=o7, b=tB, out=o8);
-    Or(a=o8, b=tC, out=o9);
-    Or(a=o9, b=tD, out=o10);
-    Or(a=o10, b=tE, out=o11);
-    Or(a=o11, b=tF, out=c);
+    // Combine terms
+    And(a=NotAorNotB, b=NotC, out=term1);
+    And(a=NotAorNotB, b=C, out=term2);
+    And(a=NotAorC, b=BorNotC, out=term3);
+    And(a=AorNotB, b=NotC, out=term4);
+    And(a=AorNotB, b=C, out=term5);
+    And(a=AorC, b=BorC, out=term6);
+
+    // Final combination
+    Or(a=term1, b=term2, out=comb1);
+    Or(a=term3, b=term4, out=comb2);
+    Or(a=term5, b=term6, out=comb3);
+    Or(a=comb1, b=comb2, out=comb4);
+    Or(a=comb4, b=comb3, out=c);
 }
