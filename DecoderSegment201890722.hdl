@@ -1,22 +1,44 @@
 CHIP DecoderSegment201890722 {
-    IN A, B, C, D;  // 输入引脚（大写）
-    OUT c;          // 输出引脚（小写）
+    /*
+    * 7段数码管Segment C解码器
+    * 输入: 4位二进制数ABCD (A是MSB)
+    * 输出: segment c控制信号
+    * 真值表:
+    * 数字   ABCD    c
+    * 0     0000    1
+    * 1     0001    0
+    * 2     0010    1
+    * 3     0011    1
+    * 4     0100    0
+    * 5     0101    1
+    * 6     0110    1
+    * 7     0111    0
+    * 8     1000    1
+    * 9     1001    1
+    * A     1010    1
+    * B     1011    1
+    * C     1100    1
+    * D     1101    1
+    * E     1110    1
+    * F     1111    1
+    */
+    
+    IN A, B, C, D;  // 输入引脚必须大写
+    OUT c;          // 输出引脚必须小写
 
     PARTS:
-    // 1. 首先创建所有反向输入
+    // 1. 创建反向输入信号
     Not(in=A, out=nA);
     Not(in=B, out=nB);
     Not(in=C, out=nC);
     Not(in=D, out=nD);
 
-    // 2. 为每个需要点亮 segment c 的情况创建 AND 门
-    // （注意全部使用大写 C 作为输入，不是输出 c）
-    
+    // 2. 实现12个需要点亮的情况（全部使用大写的C输入）
     // Hex 0 (0000)
     And(a=nA, b=nB, c=nC, d=nD, out=t0);
     
     // Hex 2 (0010)
-    And(a=nA, b=nB, c=C, d=nD, out=t2);  // 这里用 C 不是 c
+    And(a=nA, b=nB, c=C, d=nD, out=t2);
     
     // Hex 3 (0011)
     And(a=nA, b=nB, c=C, d=D, out=t3);
@@ -51,17 +73,21 @@ CHIP DecoderSegment201890722 {
     // Hex F (1111)
     And(a=A, b=B, c=C, d=D, out=tF);
 
-    // 3. 用 OR 门组合所有情况
+    // 3. 组合所有需要点亮的情况
+    // 使用树形结构提高效率
     Or(a=t0, b=t2, out=o1);
-    Or(a=o1, b=t3, out=o2);
-    Or(a=o2, b=t5, out=o3);
-    Or(a=o3, b=t6, out=o4);
-    Or(a=o4, b=t8, out=o5);
-    Or(a=o5, b=t9, out=o6);
-    Or(a=o6, b=tA, out=o7);
-    Or(a=o7, b=tB, out=o8);
-    Or(a=o8, b=tC, out=o9);
-    Or(a=o9, b=tD, out=o10);
-    Or(a=o10, b=tE, out=o11);
-    Or(a=o11, b=tF, out=c);  // 只有这里用输出 c
+    Or(a=t3, b=t5, out=o2);
+    Or(a=t6, b=t8, out=o3);
+    Or(a=t9, b=tA, out=o4);
+    Or(a=tB, b=tC, out=o5);
+    Or(a=tD, b=tE, out=o6);
+    
+    Or(a=o1, b=o2, out=o7);
+    Or(a=o3, b=o4, out=o8);
+    Or(a=o5, b=o6, out=o9);
+    
+    Or(a=o7, b=o8, out=o10);
+    Or(a=o9, b=tF, out=o11);
+    
+    Or(a=o10, b=o11, out=c);  // 最终输出
 }
