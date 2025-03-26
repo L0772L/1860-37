@@ -1,57 +1,57 @@
 CHIP DecoderSegment201890722 {
-    IN A, B, C, D;
-    OUT c;
+    IN A, B, C, D;  // 输入引脚（大写）
+    OUT c;          // 输出引脚（小写）
 
     PARTS:
-    // First create inverted inputs
-    Not(in=A, out=notA);
-    Not(in=B, out=notB);
-    Not(in=C, out=notC);
-    Not(in=D, out=notD);
+    // 1. 首先创建所有反向输入
+    Not(in=A, out=nA);
+    Not(in=B, out=nB);
+    Not(in=C, out=nC);
+    Not(in=D, out=nD);
 
-    // Segment c ON cases (0,2,3,5,6,8,9,A,B,C,D,E,F)
-    // Using proper input pins (A,B,C,D) not output (c)
+    // 2. 为每个需要点亮 segment c 的情况创建 AND 门
+    // （注意全部使用大写 C 作为输入，不是输出 c）
     
     // Hex 0 (0000)
-    And(a=notA, b=notB, c=notC, d=notD, out=t0);
+    And(a=nA, b=nB, c=nC, d=nD, out=t0);
     
     // Hex 2 (0010)
-    And(a=notA, b=notB, c=C, d=notD, out=t2);
+    And(a=nA, b=nB, c=C, d=nD, out=t2);  // 这里用 C 不是 c
     
     // Hex 3 (0011)
-    And(a=notA, b=notB, c=C, d=D, out=t3);
+    And(a=nA, b=nB, c=C, d=D, out=t3);
     
     // Hex 5 (0101)
-    And(a=notA, b=B, c=notC, d=D, out=t5);
+    And(a=nA, b=B, c=nC, d=D, out=t5);
     
     // Hex 6 (0110)
-    And(a=notA, b=B, c=C, d=notD, out=t6);
+    And(a=nA, b=B, c=C, d=nD, out=t6);
     
     // Hex 8 (1000)
-    And(a=A, b=notB, c=notC, d=notD, out=t8);
+    And(a=A, b=nB, c=nC, d=nD, out=t8);
     
     // Hex 9 (1001)
-    And(a=A, b=notB, c=notC, d=D, out=t9);
+    And(a=A, b=nB, c=nC, d=D, out=t9);
     
     // Hex A (1010)
-    And(a=A, b=notB, c=C, d=notD, out=tA);
+    And(a=A, b=nB, c=C, d=nD, out=tA);
     
     // Hex B (1011)
-    And(a=A, b=notB, c=C, d=D, out=tB);
+    And(a=A, b=nB, c=C, d=D, out=tB);
     
     // Hex C (1100)
-    And(a=A, b=B, c=notC, d=notD, out=tC);
+    And(a=A, b=B, c=nC, d=nD, out=tC);
     
     // Hex D (1101)
-    And(a=A, b=B, c=notC, d=D, out=tD);
+    And(a=A, b=B, c=nC, d=D, out=tD);
     
     // Hex E (1110)
-    And(a=A, b=B, c=C, d=notD, out=tE);
+    And(a=A, b=B, c=C, d=nD, out=tE);
     
     // Hex F (1111)
     And(a=A, b=B, c=C, d=D, out=tF);
 
-    // Combine all active cases
+    // 3. 用 OR 门组合所有情况
     Or(a=t0, b=t2, out=o1);
     Or(a=o1, b=t3, out=o2);
     Or(a=o2, b=t5, out=o3);
@@ -63,5 +63,5 @@ CHIP DecoderSegment201890722 {
     Or(a=o8, b=tC, out=o9);
     Or(a=o9, b=tD, out=o10);
     Or(a=o10, b=tE, out=o11);
-    Or(a=o11, b=tF, out=c);
+    Or(a=o11, b=tF, out=c);  // 只有这里用输出 c
 }
