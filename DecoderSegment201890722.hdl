@@ -3,29 +3,88 @@ CHIP DecoderSegment201890722 {
     OUT c;
 
     PARTS:
-    // Implement the simplified Boolean equation for segment c
+    // Implement all necessary terms from the truth table
     Not(in=A, out=notA);
     Not(in=B, out=notB);
     Not(in=C, out=notC);
     Not(in=D, out=notD);
 
-    // First term: A'B'C'D'
+    // Term 1: A'B'C'D' (Hex 0)
     And(a=notA, b=notB, out=and1);
     And(a=and1, b=notC, out=and2);
     And(a=and2, b=notD, out=term1);
 
-    // Second term: A'B'CD'
+    // Term 2: A'B'CD' (Hex 2)
     And(a=notA, b=notB, out=and3);
     And(a=and3, b=C, out=and4);
     And(a=and4, b=notD, out=term2);
 
-    // Continue with all other terms...
-    // (Implementation would include all terms from the Boolean equation)
+    // Term 3: A'B'CD (Hex 3)
+    And(a=notA, b=notB, out=and5);
+    And(a=and5, b=C, out=and6);
+    And(a=and6, b=D, out=term3);
+
+    // Term 4: A'BC'D (Hex 5)
+    And(a=notA, b=B, out=and7);
+    And(a=and7, b=notC, out=and8);
+    And(a=and8, b=D, out=term4);
+
+    // Term 5: A'BCD' (Hex 6)
+    And(a=notA, b=B, out=and9);
+    And(a=and9, b=C, out=and10);
+    And(a=and10, b=notD, out=term5);
+
+    // Term 6: AB'C'D' (Hex 8)
+    And(a=A, b=notB, out=and11);
+    And(a=and11, b=notC, out=and12);
+    And(a=and12, b=notD, out=term6);
+
+    // Term 7: AB'C'D (Hex 9)
+    And(a=A, b=notB, out=and13);
+    And(a=and13, b=notC, out=and14);
+    And(a=and14, b=D, out=term7);
+
+    // Term 8: AB'CD' (Hex A)
+    And(a=A, b=notB, out=and15);
+    And(a=and15, b=C, out=and16);
+    And(a=and16, b=notD, out=term8);
+
+    // Term 9: AB'CD (Hex B)
+    And(a=A, b=notB, out=and17);
+    And(a=and17, b=C, out=and18);
+    And(a=and18, b=D, out=term9);
+
+    // Term 10: ABC'D' (Hex C)
+    And(a=A, b=B, out=and19);
+    And(a=and19, b=notC, out=and20);
+    And(a=and20, b=notD, out=term10);
+
+    // Term 11: ABC'D (Hex D)
+    And(a=A, b=B, out=and21);
+    And(a=and21, b=notC, out=and22);
+    And(a=and22, b=D, out=term11);
+
+    // Term 12: ABCD' (Hex E)
+    And(a=A, b=B, out=and23);
+    And(a=and23, b=C, out=and24);
+    And(a=and24, b=notD, out=term12);
+
+    // Term 13: ABCD (Hex F)
+    And(a=A, b=B, out=and25);
+    And(a=and25, b=C, out=and26);
+    And(a=and26, b=D, out=term13);
 
     // Combine all terms with OR gates
     Or(a=term1, b=term2, out=or1);
     Or(a=or1, b=term3, out=or2);
-    // Continue chaining OR gates for all terms...
-    // Final output
-    Or(a=orN, b=termN, out=c);
+    Or(a=or2, b=term4, out=or3);
+    Or(a=or3, b=term5, out=or4);
+    Or(a=or4, b=term6, out=or5);
+    Or(a=or5, b=term7, out=or6);
+    Or(a=or6, b=term8, out=or7);
+    Or(a=or7, b=term9, out=or8);
+    Or(a=or8, b=term10, out=or9);
+    Or(a=or9, b=term11, out=or10);
+    Or(a=or10, b=term12, out=or11);
+    Or(a=or11, b=term13, out=c);
 }
