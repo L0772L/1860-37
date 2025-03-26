@@ -1,71 +1,16 @@
-CHIP DecoderSegment201890722 {
-    IN A, B, C, D;  // 输入引脚（必须大写）
-    OUT c;          // 输出引脚（必须小写）
-
-    PARTS:
-    // 1. 创建反向信号（全部使用大写输入）
-    Not(in=A, out=notA);
-    Not(in=B, out=notB);
-    Not(in=C, out=notC);
-    Not(in=D, out=notD);
-
-    // 2. 实现所有需要点亮segment c的情况（关键修正点）
-    // 注意：所有AND门必须使用大写的C（输入引脚），不是小写的c（输出引脚）
-    
-    // Hex 0 (0000)
-    And(a=notA, b=notB, c=notC, d=notD, out=t0);
-    
-    // Hex 2 (0010)
-    And(a=notA, b=notB, c=C, d=notD, out=t2);  // 这里使用大写的C
-    
-    // Hex 3 (0011)
-    And(a=notA, b=notB, c=C, d=D, out=t3);
-    
-    // Hex 5 (0101)
-    And(a=notA, b=B, c=notC, d=D, out=t5);
-    
-    // Hex 6 (0110)
-    And(a=notA, b=B, c=C, d=notD, out=t6);  // 这里使用大写的C
-    
-    // Hex 8 (1000)
-    And(a=A, b=notB, c=notC, d=notD, out=t8);
-    
-    // Hex 9 (1001)
-    And(a=A, b=notB, c=notC, d=D, out=t9);
-    
-    // Hex A (1010)
-    And(a=A, b=notB, c=C, d=notD, out=tA);  // 这里使用大写的C
-    
-    // Hex B (1011)
-    And(a=A, b=notB, c=C, d=D, out=tB);
-    
-    // Hex C (1100)
-    And(a=A, b=B, c=notC, d=notD, out=tC);
-    
-    // Hex D (1101)
-    And(a=A, b=B, c=notC, d=D, out=tD);
-    
-    // Hex E (1110)
-    And(a=A, b=B, c=C, d=notD, out=tE);  // 这里使用大写的C
-    
-    // Hex F (1111)
-    And(a=A, b=B, c=C, d=D, out=tF);
-
-    // 3. 组合所有需要点亮的情况
-    // 使用优化的树形OR结构
-    Or(a=t0, b=t2, out=o1);
-    Or(a=t3, b=t5, out=o2);
-    Or(a=t6, b=t8, out=o3);
-    Or(a=t9, b=tA, out=o4);
-    Or(a=tB, b=tC, out=o5);
-    Or(a=tD, b=tE, out=o6);
-    
-    Or(a=o1, b=o2, out=o7);
-    Or(a=o3, b=o4, out=o8);
-    Or(a=o5, b=o6, out=o9);
-    
-    Or(a=o7, b=o8, out=o10);
-    Or(a=o9, b=tF, out=o11);
-    
-    Or(a=o10, b=o11, out=c);  // 最终输出（小写c）
+CHIP DecoderSegment201890722{
+    IN A,B,C,D;
+    OUT c;
+PARTS:
+    Not(in = A, out = NOTA);
+    Not(in = B,out = NOTB);
+    Not(in = C, out = NOTC);
+    Not(in = D,out = NOTD);
+    And(a = NOTB,b = C, out = cAndnotb);
+    And(a = C, b = NOTD, out = cAndnotd);
+    And(a = A, b = NOTB,out = aAndnotb);
+    And(a = A, b = D, out = aandd);
+    And(a = NOTC,b = NOTA, out = out);
+    And(a = B, b = out, out = bandout);
+    0r5(a = cAndnotb, b = cAndnotd,c = aAndnotb, d = aandd, c = bandout, out = c);
 }
