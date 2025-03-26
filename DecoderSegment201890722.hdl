@@ -1,16 +1,25 @@
-CHIP DecoderSegment201890722{
-    IN A,B,C,D;
+CHIP DecoderSegment201890722 {
+    IN A, B, C, D;
     OUT c;
-PARTS:
-    Not(in = A, out = NOTA);
-    Not(in = B,out = NOTB);
-    Not(in = C, out = NOTC);
-    Not(in = D,out = NOTD);
-    And(a = NOTB,b = C, out = cAndnotb);
-    And(a = C, b = NOTD, out = cAndnotd);
-    And(a = A, b = NOTB,out = aAndnotb);
-    And(a = A, b = D, out = aandd);
-    And(a = NOTC,b = NOTA, out = out);
-    And(a = B, b = out, out = bandout);
-    0r5(a = cAndnotb, b = cAndnotd,c = aAndnotb, d = aandd, c = bandout, out = c);
+
+    PARTS:
+    // 1. 创建反向信号
+    Not(in=A, out=NOTA);
+    Not(in=B, out=NOTB);
+    Not(in=C, out=NOTC);
+    Not(in=D, out=NOTD);
+
+    // 2. 创建中间AND门
+    And(a=NOTB, b=C, out=cAndnotb);
+    And(a=C, b=NOTD, out=cAndnotd);
+    And(a=A, b=NOTB, out=aAndnotb);
+    And(a=A, b=D, out=aandd);
+    And(a=NOTC, b=NOTA, out=out1);
+    And(a=B, b=out1, out=bandout);
+
+    // 3. 最终OR门组合（修正了错误的"0r5"为"Or"）
+    Or(a=cAndnotb, b=cAndnotd, out=or1);
+    Or(a=aAndnotb, b=aandd, out=or2);
+    Or(a=or1, b=or2, out=or3);
+    Or(a=or3, b=bandout, out=c);
 }
